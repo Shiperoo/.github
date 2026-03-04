@@ -539,7 +539,6 @@
     <div class="flow-row">
       <div class="step intake">
         <div class="step-num">01</div>
-        <span class="step-icon">📥</span>
         <div class="step-title">Change Request Logged</div>
         <div class="step-detail">Client or Internal Ops team submits new feature or change request</div>
       </div>
@@ -548,7 +547,6 @@
       </div>
       <div class="step intake">
         <div class="step-num">02</div>
-        <span class="step-icon">👥</span>
         <div class="step-title">Stakeholder Review</div>
         <div class="step-detail">Key stakeholders assess scope, priority & feasibility</div>
       </div>
@@ -557,7 +555,6 @@
       </div>
       <div class="step intake">
         <div class="step-num">03</div>
-        <span class="step-icon">📋</span>
         <div class="step-title">Requirements Completed</div>
         <div class="step-detail">Dev team authors functional &amp; technical requirements for the relevant system area</div>
       </div>
@@ -566,7 +563,6 @@
       </div>
       <div class="step intake">
         <div class="step-num">04</div>
-        <span class="step-icon">✅</span>
         <div class="step-title">Ops Team Review</div>
         <div class="step-detail">Operations team confirms requirements are accurate and complete before dev begins</div>
       </div>
@@ -585,7 +581,6 @@
     <div class="flow-row">
       <div class="step dev">
         <div class="step-num">05</div>
-        <span class="step-icon">💻</span>
         <div class="step-title">Local Dev Environment</div>
         <div class="step-detail">Developer builds &amp; tests change locally against target system area</div>
       </div>
@@ -594,7 +589,6 @@
       </div>
       <div class="step dev">
         <div class="step-num">06</div>
-        <span class="step-icon">🔀</span>
         <div class="step-title">Push to Dev Branch</div>
         <div class="step-detail">Code pushed to <span class="branch-badge">dev</span> branch for peer review &amp; SIT</div>
       </div>
@@ -603,7 +597,6 @@
       </div>
       <div class="step dev">
         <div class="step-num">07</div>
-        <span class="step-icon">🔍</span>
         <div class="step-title">Peer Review &amp; SIT</div>
         <div class="step-detail">Code review by peers + System Integration Testing executed</div>
       </div>
@@ -617,7 +610,7 @@
     <div class="section-label">Phase 3 — Testing</div>
     <div class="decision-row">
       <div class="decision">
-        <div class="decision-label">⬡ Gate</div>
+        <div class="decision-label">GATE</div>
         <div class="decision-title">SIT Test Cases Passed?</div>
         <div class="decision-paths">
           <span class="path-yes">✓ Yes → Proceed to UAT</span>
@@ -634,7 +627,6 @@
     <div class="flow-row">
       <div class="step test">
         <div class="step-num">08</div>
-        <span class="step-icon">🧪</span>
         <div class="step-title">Push to UAT Branch</div>
         <div class="step-detail">Merge into <span class="branch-badge">uat</span> branch once SIT passes</div>
       </div>
@@ -643,7 +635,6 @@
       </div>
       <div class="step test">
         <div class="step-num">09</div>
-        <span class="step-icon">🤝</span>
         <div class="step-title">User Acceptance Testing</div>
         <div class="step-detail">Business / Ops users validate change meets requirements in UAT environment</div>
       </div>
@@ -652,7 +643,6 @@
       </div>
       <div class="step test">
         <div class="step-num">10</div>
-        <span class="step-icon">📦</span>
         <div class="step-title">Release Prepared</div>
         <div class="step-detail">Change release notes, backout plan &amp; deployment runbook prepared</div>
       </div>
@@ -665,9 +655,8 @@
   <div class="pipeline-section">
     <div class="section-label">Phase 4 — Change Advisory Board</div>
     <div class="gate-block">
-      <div class="gate-icon">🛡️</div>
       <div class="gate-content">
-        <div class="gate-tag">⬡ CAB Gate</div>
+        <div class="gate-tag">CAB GATE</div>
         <div class="gate-title">Change Advisory Board Approval</div>
         <div class="gate-detail">
           Change presented to CAB for formal sign-off &nbsp;·&nbsp; Release notes, test evidence &amp; rollback plan reviewed<br>
@@ -685,7 +674,6 @@
     <div class="flow-row" style="margin-bottom:16px;">
       <div class="step deploy">
         <div class="step-num">11</div>
-        <span class="step-icon">📅</span>
         <div class="step-title">Change Window Scheduled</div>
         <div class="step-detail">Tues – Thurs evenings only (unless emergency change approved)</div>
       </div>
@@ -694,7 +682,6 @@
       </div>
       <div class="step deploy">
         <div class="step-num">12</div>
-        <span class="step-icon">🔐</span>
         <div class="step-title">Privileged Access Deploy</div>
         <div class="step-detail">Authorised key team member only merges to <span class="branch-badge">prod</span> branch</div>
       </div>
@@ -703,15 +690,13 @@
       </div>
       <div class="step deploy">
         <div class="step-num">13</div>
-        <span class="step-icon">💾</span>
         <div class="step-title">Pre-Deploy Backups</div>
         <div class="step-detail">Prod code backup (always) · Dependent datastore backup (if required)</div>
       </div>
     </div>
     <div class="deploy-block">
-      <div class="gate-icon">🚀</div>
       <div class="gate-content">
-        <div class="gate-tag">⬡ Production Deployment</div>
+        <div class="gate-tag">PRODUCTION DEPLOYMENT</div>
         <div class="gate-title">Branch Merge → PROD Instances / Containers</div>
         <div class="gate-detail">
           Outage window initiated &nbsp;·&nbsp; PROD branch merge executed &nbsp;·&nbsp; All dependencies deployed in correct order<br>
@@ -729,13 +714,11 @@
     <div class="two-col">
       <div class="step deploy" style="min-width:unset;">
         <div class="step-num">14</div>
-        <span class="step-icon">🔬</span>
         <div class="step-title">Tech Team Checks</div>
         <div class="step-detail">Infrastructure, logs, API health &amp; integration endpoints validated by tech team</div>
       </div>
       <div class="step deploy" style="min-width:unset;">
         <div class="step-num">15</div>
-        <span class="step-icon">📊</span>
         <div class="step-title">Ops Team Checks</div>
         <div class="step-detail">Ops team verifies business flows: OMS, WES, Carrier integrations &amp; Connect Hub APIs</div>
       </div>
@@ -749,7 +732,7 @@
     <div class="section-label">Phase 7 — Outcome</div>
     <div class="decision-row">
       <div class="decision">
-        <div class="decision-label">⬡ Gate</div>
+        <div class="decision-label">GATE</div>
         <div class="decision-title">All Checks Passed?</div>
         <div class="decision-paths">
           <span class="path-yes">✓ Yes → Change Complete</span>
@@ -761,7 +744,6 @@
     <div style="margin-top:16px;" class="two-col">
       <!-- SUCCESS -->
       <div class="success-block">
-        <span class="icon">🎉</span>
         <div class="success-title">Change Successfully Deployed</div>
         <div class="success-detail">
           Change closed &nbsp;·&nbsp; Stakeholders notified<br>
@@ -773,12 +755,11 @@
       <div style="display:flex;flex-direction:column;gap:0;">
         <div class="step gate" style="min-width:unset;">
           <div class="step-num">ALT</div>
-          <span class="step-icon">🔎</span>
           <div class="step-title">Tech Team Investigates Issue</div>
           <div class="step-detail">Root cause analysis &amp; fix attempted within change window</div>
         </div>
         <div class="rollback-block">
-          <div class="rollback-title">⚠️ Rollback Plan Initiated</div>
+          <div class="rollback-title">Rollback Plan Initiated</div>
           <div class="rollback-detail">
             No resolution found within window<br>
             CTO approval required to initiate rollback<br>
