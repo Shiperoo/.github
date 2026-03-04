@@ -2,4 +2,4 @@
 
 | Document | Link |
 |----------|------|
-| Change Management Flow | [View →](https://shiperoo.github.io/.github/) |
+| Change Management Flow | [View →](https://shiperoo.github.io/.github/index.html) |
