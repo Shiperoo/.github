@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShiperooConnect — Change Management Flow</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #070b14;
+    --surface: #0d1424;
+    --surface2: #111d34;
+    --border: #1e2f50;
+    --accent: #00c6ff;
+    --accent2: #0072ff;
+    --green: #00e5a0;
+    --amber: #ffb020;
+    --red: #ff4757;
+    --purple: #a259ff;
+    --text: #e8f0ff;
+    --muted: #5a7090;
+    --label: #8aa8cc;
+  }
+
+  body {
+    font-family: 'Syne', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 40px 24px 80px;
+    overflow-x: hidden;
+  }
+
+  /* Subtle grid bg */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 48px 48px;
+    opacity: 0.25;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Glow orbs */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -200px; left: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(0,114,255,0.12) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .glow-orb-right {
+    position: fixed;
+    bottom: -150px; right: -150px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(0,198,255,0.09) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* HEADER */
+  header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 56px;
+    gap: 12px;
+  }
+
+  .logo-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid rgba(0,198,255,0.3);
+    border-radius: 4px;
+    padding: 5px 14px;
+    background: rgba(0,198,255,0.06);
+  }
+
+  h1 {
+    font-size: clamp(26px, 4vw, 42px);
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #ffffff 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+  }
+
+  /* LEGEND */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+    margin-bottom: 48px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--label);
+    letter-spacing: 0.5px;
+  }
+
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* PIPELINE LABEL */
+  .pipeline-section {
+    margin-bottom: 40px;
+  }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* FLOW ROW */
+  .flow-row {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    margin-bottom: 0;
+    flex-wrap: wrap;
+    row-gap: 0;
+  }
+
+  /* STEP CARD */
+  .step {
+    flex: 1;
+    min-width: 140px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 14px 16px;
+    position: relative;
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    cursor: default;
+  }
+
+  .step:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  .step-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--muted);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+
+  .step-icon {
+    font-size: 22px;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .step-title {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+
+  .step-detail {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--label);
+    line-height: 1.5;
+  }
+
+  /* Color accents per type */
+  .step.intake    { border-top: 3px solid var(--accent2); }
+  .step.intake:hover { border-color: var(--accent2); box-shadow: 0 8px 32px rgba(0,114,255,0.2); }
+
+  .step.dev       { border-top: 3px solid var(--purple); }
+  .step.dev:hover { border-color: var(--purple); box-shadow: 0 8px 32px rgba(162,89,255,0.2); }
+
+  .step.test      { border-top: 3px solid var(--amber); }
+  .step.test:hover { border-color: var(--amber); box-shadow: 0 8px 32px rgba(255,176,32,0.2); }
+
+  .step.deploy    { border-top: 3px solid var(--green); }
+  .step.deploy:hover { border-color: var(--green); box-shadow: 0 8px 32px rgba(0,229,160,0.2); }
+
+  .step.gate      { border-top: 3px solid var(--red); }
+  .step.gate:hover { border-color: var(--red); box-shadow: 0 8px 32px rgba(255,71,87,0.2); }
+
+  /* ARROW between steps */
+  .arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 6px;
+    flex-shrink: 0;
+    color: var(--border);
+    font-size: 18px;
+    align-self: center;
+  }
+
+  .arrow svg {
+    width: 20px; height: 20px;
+    fill: var(--muted);
+  }
+
+  /* DOWN ARROW between rows */
+  .down-arrow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 14px 0;
+    color: var(--muted);
+    font-size: 22px;
+    letter-spacing: 2px;
+  }
+
+  .down-arrow svg {
+    width: 24px; height: 24px;
+    fill: var(--muted);
+  }
+
+  /* DECISION DIAMOND */
+  .decision-row {
+    display: flex;
+    justify-content: center;
+    margin: 4px 0;
+  }
+
+  .decision {
+    background: var(--surface2);
+    border: 2px solid var(--amber);
+    border-radius: 8px;
+    padding: 14px 28px;
+    text-align: center;
+    position: relative;
+    min-width: 240px;
+    max-width: 380px;
+  }
+
+  .decision-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 4px;
+  }
+
+  .decision-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .decision-paths {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 10px;
+  }
+
+  .path-yes {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--green);
+    display: flex; align-items: center; gap: 4px;
+  }
+
+  .path-no {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--red);
+    display: flex; align-items: center; gap: 4px;
+  }
+
+  /* SPECIAL: Gate / CAB block */
+  .gate-block {
+    background: linear-gradient(135deg, rgba(255,71,87,0.07) 0%, rgba(255,71,87,0.02) 100%);
+    border: 1px solid rgba(255,71,87,0.35);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .gate-icon { font-size: 32px; }
+
+  .gate-content { flex: 1; }
+
+  .gate-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 4px;
+  }
+
+  .gate-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .gate-detail {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--label);
+    line-height: 1.6;
+  }
+
+  /* DEPLOY BLOCK - green highlight */
+  .deploy-block {
+    background: linear-gradient(135deg, rgba(0,229,160,0.07) 0%, rgba(0,229,160,0.02) 100%);
+    border: 1px solid rgba(0,229,160,0.3);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .deploy-block .gate-tag { color: var(--green); }
+
+  /* LAYER LABELS */
+  .layer-bar {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .layer-bar .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 6px var(--accent);
+  }
+
+  /* ROLLBACK block */
+  .rollback-block {
+    background: linear-gradient(135deg, rgba(255,71,87,0.1) 0%, rgba(255,71,87,0.03) 100%);
+    border: 1px solid rgba(255,71,87,0.4);
+    border-left: 4px solid var(--red);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-top: 8px;
+  }
+
+  .rollback-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--red);
+    margin-bottom: 4px;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .rollback-detail {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--label);
+    line-height: 1.6;
+  }
+
+  /* BRANCHES badge */
+  .branch-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(162,89,255,0.12);
+    border: 1px solid rgba(162,89,255,0.3);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--purple);
+    vertical-align: middle;
+  }
+
+  /* TWO COL layout for post-deploy */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  @media (max-width: 700px) {
+    .two-col { grid-template-columns: 1fr; }
+    .flow-row { flex-direction: column; }
+    .arrow { transform: rotate(90deg); }
+  }
+
+  /* SUCCESS block */
+  .success-block {
+    background: linear-gradient(135deg, rgba(0,229,160,0.1) 0%, rgba(0,198,255,0.05) 100%);
+    border: 1px solid rgba(0,229,160,0.4);
+    border-radius: 12px;
+    padding: 20px 24px;
+    text-align: center;
+    margin-top: 4px;
+  }
+
+  .success-block .icon { font-size: 28px; margin-bottom: 6px; display: block; }
+  .success-title { font-size: 18px; font-weight: 800; color: var(--green); margin-bottom: 4px; }
+  .success-detail { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--label); }
+
+  /* FOOTER */
+  footer {
+    margin-top: 64px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  /* Fade-in animation */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .pipeline-section {
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .pipeline-section:nth-child(1) { animation-delay: 0.05s; }
+  .pipeline-section:nth-child(2) { animation-delay: 0.12s; }
+  .pipeline-section:nth-child(3) { animation-delay: 0.19s; }
+  .pipeline-section:nth-child(4) { animation-delay: 0.26s; }
+  .pipeline-section:nth-child(5) { animation-delay: 0.33s; }
+  .pipeline-section:nth-child(6) { animation-delay: 0.40s; }
+  .pipeline-section:nth-child(7) { animation-delay: 0.47s; }
+
+  /* Vertical connector */
+  .v-connector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4px 0;
+    gap: 2px;
+  }
+
+  .v-line {
+    width: 2px;
+    height: 20px;
+    background: linear-gradient(to bottom, var(--border), var(--muted));
+  }
+</style>
+</head>
+<body>
+<div class="glow-orb-right"></div>
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo-badge">ShiperooConnect</div>
+    <h1>Change Management Flow</h1>
+    <p class="subtitle">OMS / WES · Carrier Integration · Connect Integration Hub · Client-Facing APIs</p>
+  </header>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent2)"></div>Intake & Review</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--purple)"></div>Development</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div>Testing</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Gate / CAB</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Deployment</div>
+  </div>
+
+
+  <!-- ── PHASE 1: INTAKE ── -->
+  <div class="pipeline-section">
+    <div class="section-label">Phase 1 — Intake & Logging</div>
+    <div class="flow-row">
+      <div class="step intake">
+        <div class="step-num">01</div>
+        <span class="step-icon">📥</span>
+        <div class="step-title">Change Request Logged</div>
+        <div class="step-detail">Client or Internal Ops team submits new feature or change request</div>
+      </div>
+      <div class="arrow">
+        <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+      </div>
+      <div class="step intake">
+        <div class="step-num">02</div>
+        <span class="step-icon">👥</span>
+        <div class="step-title">Stakeholder Review</div>
+        <div class="step-detail">Key stakeholders assess scope, priority & feasibility</div>
+      </div>
+      <div class="arrow">
+        <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+      </div>
+      <div class="step intake">
+        <div class="step-num">03</div>
+        <span class="step-icon">📋</span>
+        <div class="step-title">Requirements Completed</div>
+        <div class="step-detail">Dev team authors functional &amp; technical requirements for the relevant system area</div>
+      </div>
+      <div class="arrow">
+        <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+      </div>
+      <div class="step intake">
+        <div class="step-num">04</div>
+        <span class="step-icon">✅</span>
+        <div class="step-title">Ops Team Review</div>
+        <div class="step-detail">Operations team confirms requirements are accurate and complete before dev begins</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="v-connector"><div class="v-line"></div><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="#5a7090" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="v-line"></div></div>
+
+  <!-- ── PHASE 2: DEVELOPMENT ── -->
+  <div class="pipeline-section">
+    <div class="section-label">Phase 2 — Development</div>
+    <div class="layer-bar">
+      <div class="dot"></div>
+      Target Systems: OMS / WES &nbsp;·&nbsp; Carrier Integration &nbsp;·&nbsp; ShiperooConnect Integration Hub &nbsp;·&nbsp; Client-Facing APIs
+    </div>
+    <div class="flow-row">
+      <div class="step dev">
+        <div class="step-num">05</div>
+        <span class="step-icon">💻</span>
+        <div class="step-title">Local Dev Environment</div>
+        <div class="step-detail">Developer builds &amp; tests change locally against target system area</div>
+      </div>
+      <div class="arrow">
+        <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+      </div>
+      <div class="step dev">
+        <div class="step-num">06</div>
+        <span class="step-icon">🔀</span>
+        <div class="step-title">Push to Dev Branch</div>
+        <div class="step-detail">Code pushed to <span class="branch-badge">dev</span> branch for peer review &amp; SIT</div>
+      </div>
+      <div class="arrow">
+        <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+      </div>
+      <div class="step dev">
+        <div class="step-num">07</div>
+        <span class="step-icon">🔍</span>
+        <div class="step-title">Peer Review &amp; SIT</div>
+        <div class="step-detail">Code review by peers + System Integration Testing executed</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="v-connector"><div class="v-line"></div><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="#5a7090" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="v-line"></div></div>
+
+  <!-- ── PHASE 3: TESTING ── -->
+  <div class="pipeline-section">
+    <div class="section-label">Phase 3 — Testing</div>
+    <div class="decision-row">
+      <div class="decision">
+        <div class="decision-label">⬡ Gate</div>
+        <div class="decision-title">SIT Test Cases Passed?</div>
+        <div class="decision-paths">
+          <span class="path-yes">✓ Yes → Proceed to UAT</span>
+          <span class="path-no">✗ No → Return to Dev</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="v-connector"><div class="v-line"></div><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="#5a7090" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="v-line"></div></div>
+
+  <div class="pipeline-section">
+    <div class="section-label">Phase 3b — User Acceptance Testing</div>
+    <div class="flow-row">
+      <div class="step test">
+        <div class="step-num">08</div>
+        <span class="step-icon">🧪</span>
+        <div class="step-title">Push to UAT Branch</div>
+        <div class="step-detail">Merge into <span class="branch-badge">uat</span> branch once SIT passes</div>
+      </div>
+      <div class="arrow">
+        <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+      </div>
+      <div class="step test">
+        <div class="step-num">09</div>
+        <span class="step-icon">🤝</span>
+        <div class="step-title">User Acceptance Testing</div>
+        <div class="step-detail">Business / Ops users validate change meets requirements in UAT environment</div>
+      </div>
+      <div class="arrow">
+        <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+      </div>
+      <div class="step test">
+        <div class="step-num">10</div>
+        <span class="step-icon">📦</span>
+        <div class="step-title">Release Prepared</div>
+        <div class="step-detail">Change release notes, backout plan &amp; deployment runbook prepared</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="v-connector"><div class="v-line"></div><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="#5a7090" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="v-line"></div></div>
+
+  <!-- ── PHASE 4: CAB ── -->
+  <div class="pipeline-section">
+    <div class="section-label">Phase 4 — Change Advisory Board</div>
+    <div class="gate-block">
+      <div class="gate-icon">🛡️</div>
+      <div class="gate-content">
+        <div class="gate-tag">⬡ CAB Gate</div>
+        <div class="gate-title">Change Advisory Board Approval</div>
+        <div class="gate-detail">
+          Change presented to CAB for formal sign-off &nbsp;·&nbsp; Release notes, test evidence &amp; rollback plan reviewed<br>
+          <strong style="color:var(--red)">Not Approved</strong> → Return to dev/requirements &nbsp;&nbsp; <strong style="color:var(--green)">Approved</strong> → Schedule change window
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="v-connector"><div class="v-line"></div><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="#5a7090" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="v-line"></div></div>
+
+  <!-- ── PHASE 5: DEPLOYMENT ── -->
+  <div class="pipeline-section">
+    <div class="section-label">Phase 5 — Deployment</div>
+    <div class="flow-row" style="margin-bottom:16px;">
+      <div class="step deploy">
+        <div class="step-num">11</div>
+        <span class="step-icon">📅</span>
+        <div class="step-title">Change Window Scheduled</div>
+        <div class="step-detail">Tues – Thurs evenings only (unless emergency change approved)</div>
+      </div>
+      <div class="arrow">
+        <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+      </div>
+      <div class="step deploy">
+        <div class="step-num">12</div>
+        <span class="step-icon">🔐</span>
+        <div class="step-title">Privileged Access Deploy</div>
+        <div class="step-detail">Authorised key team member only merges to <span class="branch-badge">prod</span> branch</div>
+      </div>
+      <div class="arrow">
+        <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+      </div>
+      <div class="step deploy">
+        <div class="step-num">13</div>
+        <span class="step-icon">💾</span>
+        <div class="step-title">Pre-Deploy Backups</div>
+        <div class="step-detail">Prod code backup (always) · Dependent datastore backup (if required)</div>
+      </div>
+    </div>
+    <div class="deploy-block">
+      <div class="gate-icon">🚀</div>
+      <div class="gate-content">
+        <div class="gate-tag">⬡ Production Deployment</div>
+        <div class="gate-title">Branch Merge → PROD Instances / Containers</div>
+        <div class="gate-detail">
+          Outage window initiated &nbsp;·&nbsp; PROD branch merge executed &nbsp;·&nbsp; All dependencies deployed in correct order<br>
+          Services &amp; containers restarted &nbsp;·&nbsp; Health checks confirmed
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="v-connector"><div class="v-line"></div><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="#5a7090" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="v-line"></div></div>
+
+  <!-- ── PHASE 6: POST-DEPLOY ── -->
+  <div class="pipeline-section">
+    <div class="section-label">Phase 6 — Post-Deployment Verification</div>
+    <div class="two-col">
+      <div class="step deploy" style="min-width:unset;">
+        <div class="step-num">14</div>
+        <span class="step-icon">🔬</span>
+        <div class="step-title">Tech Team Checks</div>
+        <div class="step-detail">Infrastructure, logs, API health &amp; integration endpoints validated by tech team</div>
+      </div>
+      <div class="step deploy" style="min-width:unset;">
+        <div class="step-num">15</div>
+        <span class="step-icon">📊</span>
+        <div class="step-title">Ops Team Checks</div>
+        <div class="step-detail">Ops team verifies business flows: OMS, WES, Carrier integrations &amp; Connect Hub APIs</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="v-connector"><div class="v-line"></div><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="#5a7090" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="v-line"></div></div>
+
+  <!-- ── PHASE 7: OUTCOME ── -->
+  <div class="pipeline-section">
+    <div class="section-label">Phase 7 — Outcome</div>
+    <div class="decision-row">
+      <div class="decision">
+        <div class="decision-label">⬡ Gate</div>
+        <div class="decision-title">All Checks Passed?</div>
+        <div class="decision-paths">
+          <span class="path-yes">✓ Yes → Change Complete</span>
+          <span class="path-no">✗ No → Investigate / Rollback</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px;" class="two-col">
+      <!-- SUCCESS -->
+      <div class="success-block">
+        <span class="icon">🎉</span>
+        <div class="success-title">Change Successfully Deployed</div>
+        <div class="success-detail">
+          Change closed &nbsp;·&nbsp; Stakeholders notified<br>
+          Documentation updated &nbsp;·&nbsp; Monitoring continues
+        </div>
+      </div>
+
+      <!-- ROLLBACK -->
+      <div style="display:flex;flex-direction:column;gap:0;">
+        <div class="step gate" style="min-width:unset;">
+          <div class="step-num">ALT</div>
+          <span class="step-icon">🔎</span>
+          <div class="step-title">Tech Team Investigates Issue</div>
+          <div class="step-detail">Root cause analysis &amp; fix attempted within change window</div>
+        </div>
+        <div class="rollback-block">
+          <div class="rollback-title">⚠️ Rollback Plan Initiated</div>
+          <div class="rollback-detail">
+            No resolution found within window<br>
+            CTO approval required to initiate rollback<br>
+            Restore from pre-deploy code &amp; datastore backups<br>
+            Systems restarted &amp; re-verified post rollback
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>ShiperooConnect &nbsp;·&nbsp; Change Management Procedure &nbsp;·&nbsp; Internal Use Only</footer>
+</div>
+</body>
+</html>
